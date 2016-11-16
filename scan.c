@@ -124,6 +124,9 @@ int main()
 					offset = info->data + info->length + 2;
 				}
 			}
+		} else {
+			perror("Cannot read from socket\n");
+			break;
 		}
 	}
 
