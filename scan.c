@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <unistd.h>
+#include <getopt.h>
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <bluetooth/bluetooth.h>
@@ -25,15 +26,56 @@ struct hci_request ble_hci_request(uint16_t ocf, int clen, void * status, void *
 	return rq;
 }
 
-int main()
+static void usage(void)
+{
+	printf(
+	"Usage: scan [OPTION...]\n"
+	"  -i, --device=hci_dev       HCI device\n"
+	"  -h, --help                 Give this help list\n"
+	);
+}
+static struct option main_options[] = {
+	{ "device",		1, 0, 'i' },
+	{ "help",		0, 0, 'h' },
+	{ "version",		0, 0, 'v' },
+	{ 0 }
+};
+
+int main(int argc, char *argv[])
 {
 	int ret, status;
+	int device = -1;
+	int opt;
 
 	setvbuf(stdout, NULL, _IONBF, 0);
 
+	while ((opt = getopt_long(argc, argv,
+		"i:h",
+		main_options, NULL)) != -1) {
+		switch(opt) {
+		case 'i':
+			device = atoi(optarg + 3);
+			break;
+
+		case 'h':
+		default:
+			usage();
+			exit(0);
+		}
+	}
+
+	argc -= optind;
+	argv += optind;
+	optind = 0;
+
 	// Get HCI device.
 
-	const int device = hci_open_dev(hci_get_route(NULL));
+	if (device < 0) {
+		device = hci_open_dev(hci_get_route(NULL));
+	} else {
+		device = hci_open_dev(device);
+	}
+
 	if ( device < 0 ) { 
 		perror("Failed to open HCI device.");
 		return 0; 
