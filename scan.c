@@ -29,6 +29,8 @@ int main()
 {
 	int ret, status;
 
+	setvbuf(stdout, NULL, _IONBF, 0);
+
 	// Get HCI device.
 
 	const int device = hci_open_dev(hci_get_route(NULL));
@@ -106,7 +108,6 @@ int main()
 	le_advertising_info * info;
 	int len;
 
-	setvbuf(stdout, NULL, _IONBF, 0);
 
 	while ( 1 ) {
 		len = read(device, buf, sizeof(buf));
