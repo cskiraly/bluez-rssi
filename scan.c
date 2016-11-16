@@ -101,7 +101,7 @@ int main()
 		return 0;
 	}
 
-	printf("Scanning....\n");
+	//printf("Scanning....\n");
 
 	uint8_t buf[HCI_MAX_EVENT_SIZE];
 	evt_le_meta_event * meta_event;
